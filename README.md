@@ -9,14 +9,15 @@ bash build.sh
 cd ..
 git clone git@github.com:pyushkevich/itksnap.git
 cd itksnap
+git submodule update --init
 git checkout v3.4.0
 
 docker run -it -w /workdir/itksnap -v $PWD:/workdir/itksnap itksnap-build-env bash
 
 mkdir build
 cd build
-cmake .. \
-    -DITK_DIR=/opt/itk \
-    -DVTK_DIR=/opt/vtk \
-    -DQt5_DIR=/opt/qt/lib/cmake/Qt5
+/opt/qt/bin/qt-cmake .. \
+    -DITK_DIR=/opt/itk -DVTK_DIR=/opt/vtk \
+    -DQt6_DIR=/opt/qt/lib/cmake/Qt6
+
 make -j"$(nproc)" && make install -j"$(nproc)"
