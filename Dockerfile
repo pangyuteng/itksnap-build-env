@@ -27,15 +27,10 @@ RUN wget https://download.qt.io/new_archive/qt/5.10/5.10.1/single/qt-everywhere-
     tar -xf qt.tar.xz -C /src/qt --strip-components 1
 RUN apt-get install python python-dev -yq
 WORKDIR /src/qt
-RUN ./configure -prefix /opt/qt -confirm-license \
-    -no-webkit -fast -nomake demos -nomake tools \
-    -nomake examples -no-multimedia -no-phonon -no-qt3support -opensource
+RUN ./configure -prefix /opt/qt \
+    -release -opensource -confirm-license \
+    -opengl desktop -nomake examples -nomake tests
 RUN make -j"$(nproc)" && make install -j"$(nproc)"
-
-# -release -opensource 
-#     -opengl desktop -nomake examples -nomake tests
-
-
 
 
 #### VTK
