@@ -27,9 +27,16 @@ RUN wget https://download.qt.io/new_archive/qt/5.10/5.10.1/single/qt-everywhere-
     tar -xf qt.tar.xz -C /src/qt --strip-components 1
 RUN apt-get install python python-dev -yq
 WORKDIR /src/qt
-RUN ./configure -prefix /usr/local/qt -release -opensource -confirm-license \
-    -opengl desktop -nomake examples -nomake tests
+RUN ./configure -prefix /opt/qt -confirm-license \
+    -no-webkit -fast -nomake demos -nomake tools \
+    -nomake examples -no-multimedia -no-phonon -no-qt3support -opensource
 RUN make -j"$(nproc)" && make install -j"$(nproc)"
+
+# -release -opensource 
+#     -opengl desktop -nomake examples -nomake tests
+
+
+
 
 #### VTK
 
@@ -41,10 +48,14 @@ RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
 RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_PREFIX=/opt/vtk \
     -DBUILD_SHARED_LIBS:BOOL=ON \
     -DVTK_GROUP_ENABLE_Qt=YES \
-    -DQt5_DIR:PATH=/usr/local/qt/lib/cmake/Qt5 && \
+    -DVTK_GROUP_ENABLE_Qt=YES \
+    -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
+    -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
+    -DVTK_REQUIRED_OBJCXX_FLAGS='' \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 WORKDIR /inst
@@ -55,7 +66,7 @@ RUN mkdir -p /src/itk/build
 WORKDIR /src/itk/build
 RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_INSTALL_PREFIX=/opt/itk \
     -DBUILD_DOXYGEN=OFF \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_SHARED_LIBS=OFF \
@@ -66,13 +77,14 @@ RUN cmake .. \
     -DITK_BUILD_ALL_MODULES=ON \
     -DModule_ITKVtkGlue=ON \
     -DITK_USE_REVIEW=ON \
-    -DQt5_DIR:PATH=/usr/local/qt/lib/cmake/Qt5 && \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 \
+    -DModule_MorphologicalContourInterpolation=TRUE && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### example
 
 ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
-ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH /opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
 RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
 WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
 RUN cmake .. && make
