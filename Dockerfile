@@ -10,26 +10,33 @@
 # itksnap/itksnap                  <- ITK-SNAP source tree 
 # itksnap/gcc64rel
 
-ARG QT_VER=6.2.2
+ARG QT_MAJOR_VER=5.10
+ARG QT_VER=5.10.1
 ARG VTK_VER=9.1.0
 ARG ITK_VER=5.1.0
 ARG MYPATH=/usr/local
 ARG MYLIBPATH=/usr/local/lib
 
-FROM ubuntu:20.04 as builder
+FROM ubuntu:18.04 as builder
 
 ARG MYPATH
 ARG MYLIBPATH
+ARG QT_MAJOR_VER
 ARG QT_VER
 ARG VTK_VER
 ARG ITK_VER
 
-
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update &&  apt-get install -yq --no-install-recommends \
-    wget autotools-dev build-essential ca-certificates \
-    cmake git wget curl vim \
-    libosmesa6-dev 
+RUN apt-get update && apt-get install -yq --no-install-recommends \
+        autotools-dev build-essential ca-certificates \
+        cmake git wget vim \
+        software-properties-common \
+        libpng-dev libx11-dev libxt-dev libgl1-mesa-dev libglu1-mesa-dev \
+        libfontconfig-dev libxrender-dev libncurses5-dev libosmesa6-dev \
+        python python-dev
+
+#RUN  rm -rf /var/lib/apt/lists/*
+
 
 # Prefetch sources
 WORKDIR /opt/sources
@@ -82,17 +89,13 @@ RUN cmake .. \
 
 
 WORKDIR /opt/sources
-RUN wget --quiet --no-check-certificate https://github.com/qt/qt5/archive/refs/tags/v${QT_VER}.tar.gz -O qt.tar.gz && \
-    tar xfz qt.tar.gz
+RUN  wget --quiet --no-check-certificate https://download.qt.io/new_archive/qt/${QT_MAJOR_VER}/${QT_VER}/single/qt-everywhere-src-${QT_VER}.tar.xz -O qt.tar.xz && \
+    tar xf qt.tar.xz
 
-# RUN mkdir -p /opt/sources/QT-${QT_VER}/build
-# WORKDIR /opt/sources/QT-${QT_VER}/build
+WORKDIR /opt/sources/qt-everywhere-src-${QT_VER}
+RUN ./configure -prefix /usr/local/qt -release -opensource -confirm-license \
+    -opengl desktop -nomake examples -nomake tests && \
+    make -j"$(nproc)" && make install -j"$(nproc)"
 
-# WORKDIR /inst
-# RUN wget https://download.qt.io/new_archive/qt/5.10/5.10.1/single/qt-everywhere-src-5.10.1.tar.xz -O qt.tar.xz && \
-#     tar -xf qt.tar.xz -C /src/qt --strip-components 1
-# RUN apt-get install python python-dev -yq
-# WORKDIR /src/qt
-# RUN ./configure -prefix /usr/local/qt -release -opensource -confirm-license \
-#     -opengl desktop -nomake examples -nomake tests
-# RUN make -j"$(nproc)" && make install
+
+
