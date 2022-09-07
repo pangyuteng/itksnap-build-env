@@ -24,8 +24,10 @@ RUN mkdir /inst
 #### CMAKE
 ARG CMAKE_VER
 WORKDIR /inst
-RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-linux-x86_64.sh
-RUN echo y | bash cmake-${CMAKE_VER}-linux-x86_64.sh
+RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-linux-x86_64.tar.gz && \
+    tar -zxvf cmake-${CMAKE_VER}-linux-x86_64.tar.gz
+
+ENV PATH=/inst/cmake-3.22.6-linux-x86_64/bin:$PATH
 
 #### QT
 ARG QT_VER
@@ -45,7 +47,7 @@ RUN ./configure --prefix /opt/qt \
 ARG VTK_VER
 WORKDIR /inst
 RUN mkdir -p /src/vtk
-RUN wget https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
+RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
 RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
@@ -64,7 +66,7 @@ RUN cmake .. \
 ARG ITK_VER
 WORKDIR /inst
 RUN mkdir -p /src/itk
-RUN wget https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
+RUN wget --quiet https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
     tar -xzf itk.tar.gz -C /src/itk --strip-components 1
 RUN mkdir -p /src/itk/build
 WORKDIR /src/itk/build
