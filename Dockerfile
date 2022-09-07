@@ -37,10 +37,10 @@ WORKDIR /inst
 RUN git clone https://github.com/qt/qt5.git qt && \
     cd qt && git checkout v${QT_VER} && ./init-repository
 
-RUN ./configure --prefix /opt/qt \
-    -no-webkit -fast -nomake demos -nomake tools \
-    -nomake examples -no-multimedia -no-phonon  \
-    -no-qt3support -opensource && \
+WORKDIR /inst/qt
+RUN ./configure --prefix=/opt/qt \
+    -opensource -confirm-license \
+    -nomake tools -nomake examples && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### VTK
