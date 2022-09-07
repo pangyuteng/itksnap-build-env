@@ -10,8 +10,8 @@
 # itksnap/itksnap                  <- ITK-SNAP source tree 
 # itksnap/gcc64rel
 
-ARG QT_MAJOR_VER=5.10
-ARG QT_VER=5.10.1
+ARG QT_MAJOR_MINOR_VER=5.11
+ARG QT_VER=5.11.3
 ARG VTK_VER=9.1.0
 ARG ITK_VER=5.1.0
 ARG MYPATH=/usr/local
@@ -21,10 +21,6 @@ FROM ubuntu:20.04 as builder
 
 ARG MYPATH
 ARG MYLIBPATH
-ARG QT_MAJOR_VER
-ARG QT_VER
-ARG VTK_VER
-ARG ITK_VER
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -yq --no-install-recommends \
@@ -37,8 +33,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 
 #RUN  rm -rf /var/lib/apt/lists/*
 
-
-# Prefetch sources
+ARG VTK_VER
 WORKDIR /opt/sources
 RUN wget --quiet --no-check-certificate https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
 	tar xfz vtk.tar.gz
@@ -63,7 +58,7 @@ RUN cmake .. \
     -DVTK_WRAP_PYTHON=OFF \
     && make -j"$(nproc)" && make install -j"$(nproc)"
 
-# prefetch sources
+ARG ITK_VER
 WORKDIR /opt/sources
 RUN wget --quiet --no-check-certificate https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
     tar xfz itk.tar.gz
@@ -87,9 +82,10 @@ RUN cmake .. \
 	-DITK_USE_REVIEW=ON \
     && make -j"$(nproc)" && make install -j"$(nproc)"
 
-
+ARG QT_MAJOR_MINOR_VER
+ARG QT_VER
 WORKDIR /opt/sources
-RUN  wget --quiet --no-check-certificate https://download.qt.io/new_archive/qt/${QT_MAJOR_VER}/${QT_VER}/single/qt-everywhere-src-${QT_VER}.tar.xz -O qt.tar.xz && \
+RUN  wget --quiet --no-check-certificate https://download.qt.io/new_archive/qt/${QT_MAJOR_MINOR_VER}/${QT_VER}/single/qt-everywhere-src-${QT_VER}.tar.xz -O qt.tar.xz && \
     tar xf qt.tar.xz
 
 WORKDIR /opt/sources/qt-everywhere-src-${QT_VER}
