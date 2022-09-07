@@ -27,7 +27,7 @@ WORKDIR /inst
 RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-linux-x86_64.tar.gz && \
     tar -zxvf cmake-${CMAKE_VER}-linux-x86_64.tar.gz
 
-ENV PATH=/inst/cmake-3.22.6-linux-x86_64/bin:$PATH
+ENV PATH=/inst/cmake-${CMAKE_VER}-linux-x86_64/bin:$PATH
 
 #### QT
 ARG QT_VER
