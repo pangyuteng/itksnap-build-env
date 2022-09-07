@@ -1,6 +1,8 @@
-# versions specified 
-# per http://www.itksnap.org/pmwiki/pmwiki.php%3Fn%3DDocumentation.BuildingITK-SNAP
-# visited on 2022-SEP-06
+#
+# below cmake,qt,vtk,itk versions specified per below link visited on 2022-SEP-06
+# http://www.itksnap.org/pmwiki/pmwiki.php%3Fn%3DDocumentation.BuildingITK-SNAP
+#
+# 3.8.0 and later	rel_3.8	2.8.12	4.12.2	6.3.0	
 
 ARG CMAKE_VER=3.22.6
 ARG QT_VER=6.2.2
@@ -31,17 +33,16 @@ ENV PATH=/inst/cmake-${CMAKE_VER}-linux-x86_64/bin:$PATH
 
 #### QT
 ARG QT_VER
-RUN mkdir -p /src/qt
-WORKDIR /inst
-
+RUN mkdir -p /src
+WORKDIR /src
 RUN git clone https://github.com/qt/qt5.git qt && \
     cd qt && git checkout v${QT_VER} && ./init-repository
 
-WORKDIR /inst/qt
+WORKDIR /src/qt
 RUN ./configure --prefix=/opt/qt \
     -opensource -confirm-license \
-    -nomake tools -nomake examples && \
-    make -j"$(nproc)" && make install -j"$(nproc)"
+    -nomake tools -nomake examples
+RUN make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### VTK
 ARG VTK_VER
