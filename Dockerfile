@@ -147,8 +147,9 @@ ENV Qt6_DIR /usr/local/qt/lib/cmake/Qt6
 RUN apt update && \
     apt install -yq libcurl4-openssl-dev
 
-
-### example
-RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
-WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
-RUN cmake .. && make
+# ### example uses Qt5, we have Qt6...
+# RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
+# WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
+# RUN /opt/qt/bin/qt-cmake .. \
+#     -DVTK_DIR=/opt/vtk \
+#     -DQt6_DIR=/opt/qt/lib/cmake/Qt6 && make
