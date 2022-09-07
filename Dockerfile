@@ -43,10 +43,54 @@ RUN git clone https://github.com/qt/qt5.git qt && \
     cd qt && git checkout v${QT_VER} && \
     perl init-repository --module-subset=default,-qtwebengine 
 
+RUN apt install gcc-8 g++-8 -yq
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
+
 WORKDIR /src/qt-build
-RUN ../qt/configure --prefix=/opt/qt \
+
+RUN ../qt/configure -silent -opensource -confirm-license \
+    -prefix /opt/qt \
     -opensource -confirm-license \
-    -nomake tools -nomake examples
+    -nomake tools \
+    -nomake examples \
+    -nomake tests \
+    -eglfs \
+    -xcb \
+    -skip qttools \
+    -skip qtcoap \
+    -skip qtmqtt \
+    -skip qtopcua \
+    -skip qttranslations \
+    -skip qt3d \
+    -skip qtactiveqt \
+    -skip qtandroidextras \
+    -skip qtcanvas3d \
+    -skip qtcharts \
+    -skip qtconnectivity \
+    -skip qtdatavis3d \
+    -skip qtdoc \
+    -skip qtgamepad \
+    -skip qtlocation \
+    -skip qtmacextras \
+    -skip qtmultimedia \
+    -skip qtnetworkauth \
+    -skip qtpurchasing \
+    -skip qtremoteobjects \
+    -skip qtscxml \
+    -skip qtsensors \
+    -skip qtserialbus \
+    -skip qtserialport \
+    -skip qtspeech \
+    -skip qtvirtualkeyboard \
+    -skip qtwayland \
+    -skip qtwebchannel \
+    -skip qtwebengine \
+    -skip qtwebsockets \
+    -skip qtwebview \
+    -skip qtwebglplugin \
+    -skip qtwinextras \
+    -skip qtxmlpatterns
 
 RUN make -j"$(nproc)" && make install -j"$(nproc)"
 
@@ -60,6 +104,7 @@ RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v$
     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
 RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
+
 RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
@@ -68,8 +113,15 @@ RUN cmake .. \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
     -DVTK_REQUIRED_OBJCXX_FLAGS='' \
-    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
+
+#Unix Makefiles, Ninja
+#ENV CMAKE_GENERATOR=Ninja
+#ENV CMAKE_GENERATOR=Makefiles
+#RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 20
+#RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 20
+
 
 #### ITK
 ARG ITK_VER
@@ -92,11 +144,11 @@ RUN cmake .. \
     -DModule_ITKReview=ON \
     -DITK_BUILD_DEFAULT_MODULES=ON \
     -DModule_MorphologicalContourInterpolation=ON \
-    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
+    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
-ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
+ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt6
 
 #### example
 # RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
