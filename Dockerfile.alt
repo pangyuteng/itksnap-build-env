@@ -65,7 +65,8 @@ RUN cmake .. \
     -DITK_USE_KWSTYLE=OFF \
     -DITK_BUILD_ALL_MODULES=ON \
     -DModule_ITKVtkGlue=ON \
-    -DITK_USE_REVIEW=ON && \
+    -DITK_USE_REVIEW=ON \
+    -DQt5_DIR:PATH=/usr/local/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### example
