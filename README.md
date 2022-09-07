@@ -3,6 +3,7 @@
 based on below doc, create qt,vtk,itk,itksnap building in docker.
 
 http://www.itksnap.org/pmwiki/pmwiki.php%3Fn%3DDocumentation.BuildingITK-SNAP
+https://wiki.qt.io/Building_Qt_5_from_Git
 
 bash build.sh
 cd ..

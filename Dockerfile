@@ -13,13 +13,18 @@ ARG ITK_VER=5.2.1
 
 FROM ubuntu:18.04
 
-RUN apt-get update && apt-get install -yq \
+RUN cp /etc/apt/sources.list /etc/apt/sources.list~ && \
+    sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+
+RUN apt-get update && \
+    apt-get install -yq \
     autotools-dev build-essential ca-certificates \
     software-properties-common \
     git wget curl vim \    
     libpng-dev libx11-dev libxt-dev libgl1-mesa-dev \
     libglu1-mesa-dev libfontconfig-dev libxrender-dev libncurses5-dev \
-    python python-dev
+    perl python3 python-dev && \
+    apt-get build-dep -yq qtbase5-dev
 
 #RUN  rm -rf /var/lib/apt/lists/*
 
@@ -35,13 +40,17 @@ ENV PATH=/inst/cmake-${CMAKE_VER}-linux-x86_64/bin:$PATH
 ARG QT_VER
 WORKDIR /src
 RUN git clone https://github.com/qt/qt5.git qt && \
-    cd qt && git checkout v${QT_VER} && ./init-repository
+    cd qt && git checkout v${QT_VER} && \
+    perl init-repository --module-subset=default,-qtwebengine 
 
-WORKDIR /src/qt
-RUN ./configure --prefix=/opt/qt \
+WORKDIR /src/qt-build
+RUN ../qt/configure --prefix=/opt/qt \
     -opensource -confirm-license \
     -nomake tools -nomake examples
+
 RUN make -j"$(nproc)" && make install -j"$(nproc)"
+
+
 
 #### VTK
 ARG VTK_VER
