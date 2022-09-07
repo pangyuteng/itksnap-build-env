@@ -21,7 +21,10 @@ git config --global --add safe.directory /workdir/itksnap/Submodules/c3d
 mkdir build
 cd build
 /opt/qt/bin/qt-cmake .. \
-    -DITK_DIR=/opt/itk -DVTK_DIR=/opt/vtk \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/opt/itksnap \
+    -DITK_DIR=/opt/itk \
+    -DVTK_DIR=/opt/vtk \
     -DQt6_DIR=/opt/qt/lib/cmake/Qt6
 
 make -j"$(nproc)" && make install -j"$(nproc)"
