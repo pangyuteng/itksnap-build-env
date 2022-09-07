@@ -17,27 +17,33 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 #RUN  rm -rf /var/lib/apt/lists/*
 
 RUN apt-get install libpng-dev libx11-dev libxt-dev libgl1-mesa-dev libglu1-mesa-dev libfontconfig-dev libxrender-dev libncurses5-dev -yq
-
-#### QT
+RUN apt-get install python python-dev -yq
 
 RUN mkdir /inst
+
+#### QT
+ARG QT_VER=6.2.2
 RUN mkdir -p /src/qt
 WORKDIR /inst
-RUN wget https://download.qt.io/new_archive/qt/5.10/5.10.1/single/qt-everywhere-src-5.10.1.tar.xz -O qt.tar.xz && \
-    tar -xf qt.tar.xz -C /src/qt --strip-components 1
-RUN apt-get install python python-dev -yq
-WORKDIR /src/qt
-RUN ./configure -prefix /opt/qt \
-    -release -opensource -confirm-license \
-    -opengl desktop -nomake examples -nomake tests
-RUN make -j"$(nproc)" && make install -j"$(nproc)"
 
+RUN git clone https://github.com/qt/qt5.git qt && \
+    cd qt && git checkout v${QT_VER} && ./init-repository
+
+# RUN ./configure -prefix /opt/qt \
+#     -release -opensource -confirm-license \
+#     -opengl desktop -nomake examples -nomake tests
+
+RUN ./configure --prefix /opt/qt \
+    -no-webkit -fast -nomake demos -nomake tools \
+    -nomake examples -no-multimedia -no-phonon  \
+    -no-qt3support -opensource && \
+    make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### VTK
-
+ARG VTK_VER=6.3.0
 WORKDIR /inst
 RUN mkdir -p /src/vtk
-RUN wget https://gitlab.kitware.com/vtk/vtk/-/archive/v9.0.1/vtk-v9.0.1.tar.gz -O vtk.tar.gz && \
+RUN wget https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
 RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
@@ -53,9 +59,10 @@ RUN cmake .. \
     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
+ARG ITK_VER=5.2.1
 WORKDIR /inst
 RUN mkdir -p /src/itk
-RUN wget https://github.com/InsightSoftwareConsortium/ITK/releases/download/v5.1.0/InsightToolkit-5.1.0.tar.gz -O itk.tar.gz && \
+RUN wget https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
     tar -xzf itk.tar.gz -C /src/itk --strip-components 1
 RUN mkdir -p /src/itk/build
 WORKDIR /src/itk/build
