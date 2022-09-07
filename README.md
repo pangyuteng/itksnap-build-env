@@ -15,7 +15,7 @@ docker run -it -w /workdir/itksnap -v $PWD:/workdir/itksnap itksnap-build-env ba
 mkdir build
 cd build
 cmake .. \
-    -DITK_DIR=/opt/vtk/ \
-    -DVTK_DIR=/opt/itk/ \
+    -DITK_DIR=/opt/itk \
+    -DVTK_DIR=/opt/vtk \
     -DQt5_DIR=/opt/qt/lib/cmake/Qt5
 make -j"$(nproc)" && make install -j"$(nproc)"
