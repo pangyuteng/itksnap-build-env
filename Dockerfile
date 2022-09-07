@@ -1,4 +1,8 @@
-ARG CMAKE_VER=6.2.2
+# versions specified 
+# per http://www.itksnap.org/pmwiki/pmwiki.php%3Fn%3DDocumentation.BuildingITK-SNAP
+# visited on 2022-SEP-06
+
+ARG CMAKE_VER=3.22.6
 ARG QT_VER=6.2.2
 ARG VTK_VER=9.1.0
 ARG ITK_VER=5.2.1
@@ -21,7 +25,7 @@ RUN mkdir /inst
 ARG CMAKE_VER
 WORKDIR /inst
 RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-linux-x86_64.sh
-RUN bash cmake-${CMAKE_VER}-linux-x86_64.sh
+RUN echo y | bash cmake-${CMAKE_VER}-linux-x86_64.sh
 
 #### QT
 ARG QT_VER
