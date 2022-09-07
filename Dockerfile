@@ -110,10 +110,11 @@ RUN cmake .. \
     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
     -DBUILD_SHARED_LIBS:BOOL=ON \
     -DVTK_GROUP_ENABLE_Qt=YES \
+    -DVTK_MODULE_ENABLE_VTK_GuiSupportQt=YES \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
     -DVTK_REQUIRED_OBJCXX_FLAGS='' \
-    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
+    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 #Unix Makefiles, Ninja
