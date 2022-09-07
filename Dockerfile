@@ -48,15 +48,15 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
 RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
 
 WORKDIR /src/qt-build
-
+ARG CMAKE_GENERATOR=Ninja
 RUN ../qt/configure -silent -opensource -confirm-license \
     -prefix /opt/qt \
     -opensource -confirm-license \
+    -opengl \
+    -xcb \
     -nomake tools \
     -nomake examples \
     -nomake tests \
-    -eglfs \
-    -xcb \
     -skip qttools \
     -skip qtcoap \
     -skip qtmqtt \
@@ -95,8 +95,8 @@ RUN ../qt/configure -silent -opensource -confirm-license \
 RUN make -j"$(nproc)" && make install -j"$(nproc)"
 
 
-
 #### VTK
+ARG CMAKE_GENERATOR="Unix Makefiles"
 ARG VTK_VER
 WORKDIR /inst
 RUN mkdir -p /src/vtk
@@ -114,8 +114,11 @@ RUN cmake .. \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
     -DVTK_REQUIRED_OBJCXX_FLAGS='' \
-    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
-    make -j"$(nproc)" && make install -j"$(nproc)"
+    -DVTK_QT_VERSION=6 \
+    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 
+
+#&& \
+#make -j"$(nproc)" && make install -j"$(nproc)"
 
 #Unix Makefiles, Ninja
 #ENV CMAKE_GENERATOR=Ninja
