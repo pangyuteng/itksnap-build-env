@@ -17,7 +17,7 @@ ARG ITK_VER=5.1.0
 ARG MYPATH=/usr/local
 ARG MYLIBPATH=/usr/local/lib
 
-FROM ubuntu:18.04 as builder
+FROM ubuntu:20.04 as builder
 
 ARG MYPATH
 ARG MYLIBPATH
