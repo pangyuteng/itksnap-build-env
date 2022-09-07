@@ -144,9 +144,9 @@ RUN /opt/qt/bin/qt-cmake .. \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
-ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt6
+ENV Qt6_DIR /usr/local/qt/lib/cmake/Qt6
 
-#### example
-# RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
-# WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
-# RUN cmake .. && make
+### example
+RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
+WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
+RUN cmake .. && make
