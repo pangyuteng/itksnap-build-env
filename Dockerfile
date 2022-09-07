@@ -67,19 +67,19 @@ RUN cmake .. \
     -DBUILD_SHARED_LIBS=OFF \
     -DITK_DYNAMIC_LOADING=OFF \
     -DBUILD_TESTING=OFF \
-    -DCMAKE_BACKWARDS_COMPATIBILITY=3.1 \
     -DITK_USE_KWSTYLE=OFF \
-    -DITK_BUILD_ALL_MODULES=ON \
     -DModule_ITKVtkGlue=ON \
-    -DITK_USE_REVIEW=ON \
-    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 \
-    -DModule_MorphologicalContourInterpolation:BOOL=ON && \
+    -DModule_ITKReview=ON \
+    -DITK_BUILD_DEFAULT_MODULES=ON \
+    -DModule_MorphologicalContourInterpolation=ON \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
-#### example
 
+ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
 ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
-ENV LD_LIBRARY_PATH /opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
-RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
-WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
-RUN cmake .. && make
+
+#### example
+# RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
+# WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
+# RUN cmake .. && make
