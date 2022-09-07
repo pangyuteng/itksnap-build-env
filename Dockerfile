@@ -119,13 +119,6 @@ RUN /opt/qt/bin/qt-cmake .. \
     -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
-#Unix Makefiles, Ninja
-#ENV CMAKE_GENERATOR=Ninja
-#ENV CMAKE_GENERATOR=Makefiles
-#RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 20
-#RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 20
-
-
 #### ITK
 ARG ITK_VER
 WORKDIR /inst
@@ -134,7 +127,7 @@ RUN wget --quiet https://github.com/InsightSoftwareConsortium/ITK/releases/downl
     tar -xzf itk.tar.gz -C /src/itk --strip-components 1
 RUN mkdir -p /src/itk/build
 WORKDIR /src/itk/build
-RUN cmake .. \
+RUN /opt/qt/bin/qt-cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/itk \
     -DBUILD_DOXYGEN=OFF \
