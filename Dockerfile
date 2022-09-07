@@ -106,7 +106,7 @@ RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v$
 RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
 
-RUN cmake .. \
+RUN /opt/qt/bin/qt-cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
     -DBUILD_SHARED_LIBS:BOOL=ON \
@@ -116,10 +116,8 @@ RUN cmake .. \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
     -DVTK_REQUIRED_OBJCXX_FLAGS='' \
     -DVTK_QT_VERSION=6 \
-    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 
-
-#&& \
-#make -j"$(nproc)" && make install -j"$(nproc)"
+    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
+    make -j"$(nproc)" && make install -j"$(nproc)"
 
 #Unix Makefiles, Ninja
 #ENV CMAKE_GENERATOR=Ninja
