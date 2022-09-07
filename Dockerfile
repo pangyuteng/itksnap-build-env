@@ -145,7 +145,7 @@ ENV Qt6_DIR /usr/local/qt/lib/cmake/Qt6
 
 
 RUN apt update && \
-    sudo apt install -yq libcurl4-openssl-dev
+    apt install -yq libcurl4-openssl-dev
 
 
 ### example
