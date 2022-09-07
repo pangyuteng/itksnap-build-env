@@ -73,7 +73,7 @@ RUN cmake .. \
     -DModule_ITKVtkGlue=ON \
     -DITK_USE_REVIEW=ON \
     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 \
-    -DModule_MorphologicalContourInterpolation=TRUE && \
+    -DModule_MorphologicalContourInterpolation:BOOL=ON && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### example
