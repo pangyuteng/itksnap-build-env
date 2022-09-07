@@ -35,19 +35,38 @@ RUN make -j"$(nproc)" && make install -j"$(nproc)"
 
 WORKDIR /inst
 RUN mkdir -p /src/vtk
-RUN wget https://www.vtk.org/files/release/9.0/VTK-9.0.1.tar.gz -O vtk.tar.gz && \
+RUN wget https://gitlab.kitware.com/vtk/vtk/-/archive/v9.0.1/vtk-v9.0.1.tar.gz -O vtk.tar.gz && \
     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
-WORKDIR /src/vtk
-RUN mkdir build
+RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
-
 RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
     -DBUILD_SHARED_LIBS:BOOL=ON \
     -DVTK_GROUP_ENABLE_Qt=YES \
-    -DQt5_DIR:PATH=/usr/local/qt/lib/cmake/Qt5
-RUN make -j"$(nproc)" && make install -j"$(nproc)"
+    -DQt5_DIR:PATH=/usr/local/qt/lib/cmake/Qt5 && \
+    make -j"$(nproc)" && make install -j"$(nproc)"
+
+WORKDIR /inst
+RUN mkdir -p /src/itk
+RUN wget https://github.com/InsightSoftwareConsortium/ITK/releases/download/v5.1.0/InsightToolkit-5.1.0.tar.gz -O itk.tar.gz && \
+    tar -xzf itk.tar.gz -C /src/itk --strip-components 1
+RUN mkdir -p /src/itk/build
+WORKDIR /src/itk/build
+RUN cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DBUILD_DOXYGEN=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DITK_DYNAMIC_LOADING=OFF \
+    -DBUILD_TESTING=OFF \
+    -DCMAKE_BACKWARDS_COMPATIBILITY=3.1 \
+    -DITK_USE_KWSTYLE=OFF \
+    -DITK_BUILD_ALL_MODULES=ON \
+    -DModule_ITKVtkGlue=ON \
+    -DITK_USE_REVIEW=ON && \
+    make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### example
 
