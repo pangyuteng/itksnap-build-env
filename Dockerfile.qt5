@@ -41,72 +41,74 @@ RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
 
 WORKDIR /src/qt-build
 ARG CMAKE_GENERATOR=Ninja
-RUN ../qt/configure -silent -opensource -confirm-license \
+RUN ../qt/configure \
     -prefix /opt/qt \
-    -opensource -confirm-license \
-    -opengl \
-    -xcb \
+    -release -opensource -confirm-license \
+    -opengl desktop \
+    -static -qt-xcb -no-glib \
+    -no-pulseaudio -no-alsa \
     -nomake tools \
     -nomake examples \
     -nomake tests 
 
-RUN make -j"$(nproc)" && make install -j"$(nproc)"
+
+# RUN make -j"$(nproc)" && make install -j"$(nproc)"
 
 
-#### VTK
-ARG CMAKE_GENERATOR="Unix Makefiles"
-ARG VTK_VER
-WORKDIR /inst
-RUN mkdir -p /src/vtk
-#RUN wget --quiet https://github.com/Kitware/VTK/archive/refs/tags/v${VTK_VER}.tar.gz -O vtk.tar.gz && \
-RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
-    tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
-RUN mkdir -p /src/vtk/build
-WORKDIR /src/vtk/build
+# #### VTK
+# ARG CMAKE_GENERATOR="Unix Makefiles"
+# ARG VTK_VER
+# WORKDIR /inst
+# RUN mkdir -p /src/vtk
+# #RUN wget --quiet https://github.com/Kitware/VTK/archive/refs/tags/v${VTK_VER}.tar.gz -O vtk.tar.gz && \
+# RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
+#     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
+# RUN mkdir -p /src/vtk/build
+# WORKDIR /src/vtk/build
 
-RUN /opt/qt/bin/qt-cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/opt/vtk \
-    -DBUILD_SHARED_LIBS:BOOL=ON \
-    -DVTK_GROUP_ENABLE_Qt=YES \
-    -DVTK_MODULE_ENABLE_VTK_GuiSupportQt=YES \
-    -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
-    -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
-    -DVTK_REQUIRED_OBJCXX_FLAGS='' \
-    -DVTK_QT_VERSION=5 \
-    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
-    make -j"$(nproc)" && make install -j"$(nproc)"
+# RUN /opt/qt/bin/qt-cmake .. \
+#     -DCMAKE_BUILD_TYPE=Release \
+#     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
+#     -DBUILD_SHARED_LIBS:BOOL=ON \
+#     -DVTK_GROUP_ENABLE_Qt=YES \
+#     -DVTK_MODULE_ENABLE_VTK_GuiSupportQt=YES \
+#     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
+#     -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
+#     -DVTK_REQUIRED_OBJCXX_FLAGS='' \
+#     -DVTK_QT_VERSION=5 \
+#     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
+#     make -j"$(nproc)" && make install -j"$(nproc)"
 
-#### ITK
-ARG ITK_VER
-WORKDIR /inst
-RUN mkdir -p /src/itk
-RUN wget --quiet https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
-    tar -xzf itk.tar.gz -C /src/itk --strip-components 1
-RUN mkdir -p /src/itk/build
-WORKDIR /src/itk/build
-RUN /opt/qt/bin/qt-cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/opt/itk \
-    -DBUILD_DOXYGEN=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_SHARED_LIBS=OFF \
-    -DITK_DYNAMIC_LOADING=OFF \
-    -DBUILD_TESTING=OFF \
-    -DITK_USE_KWSTYLE=OFF \
-    -DModule_ITKVtkGlue=ON \
-    -DModule_ITKReview=ON \
-    -DITK_BUILD_DEFAULT_MODULES=ON \
-    -DModule_MorphologicalContourInterpolation=ON \
-    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
-    make -j"$(nproc)" && make install -j"$(nproc)"
+# #### ITK
+# ARG ITK_VER
+# WORKDIR /inst
+# RUN mkdir -p /src/itk
+# RUN wget --quiet https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
+#     tar -xzf itk.tar.gz -C /src/itk --strip-components 1
+# RUN mkdir -p /src/itk/build
+# WORKDIR /src/itk/build
+# RUN /opt/qt/bin/qt-cmake .. \
+#     -DCMAKE_BUILD_TYPE=Release \
+#     -DCMAKE_INSTALL_PREFIX=/opt/itk \
+#     -DBUILD_DOXYGEN=OFF \
+#     -DBUILD_EXAMPLES=OFF \
+#     -DBUILD_SHARED_LIBS=OFF \
+#     -DITK_DYNAMIC_LOADING=OFF \
+#     -DBUILD_TESTING=OFF \
+#     -DITK_USE_KWSTYLE=OFF \
+#     -DModule_ITKVtkGlue=ON \
+#     -DModule_ITKReview=ON \
+#     -DITK_BUILD_DEFAULT_MODULES=ON \
+#     -DModule_MorphologicalContourInterpolation=ON \
+#     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
+#     make -j"$(nproc)" && make install -j"$(nproc)"
 
-ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
-ENV Qt6_DIR /usr/local/qt/lib/cmake/Qt6
+# ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
+# ENV Qt6_DIR /usr/local/qt/lib/cmake/Qt6
 
 
-RUN apt update && \
-    apt install -yq libcurl4-openssl-dev
+# RUN apt update && \
+#     apt install -yq libcurl4-openssl-dev
 
 # ### example uses Qt5, we have Qt6...
 # RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
