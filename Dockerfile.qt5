@@ -36,7 +36,6 @@ RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
 #### QT
 ARG QT_MM_VER
 ARG QT_VER
-RUN mkdir /inst
 RUN mkdir -p /src/qt
 WORKDIR /inst
 RUN wget https://download.qt.io/new_archive/qt/${QT_MM_VER}/${QT_VER}/single/qt-everywhere-src-${QT_VER}.tar.gz -O qt.tar.gz && \
