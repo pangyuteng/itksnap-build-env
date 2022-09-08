@@ -15,7 +15,8 @@ RUN apt-get update && \
     git wget curl vim \    
     libpng-dev libx11-dev libxt-dev libgl1-mesa-dev \
     libglu1-mesa-dev libfontconfig-dev libxrender-dev libncurses5-dev \
-    perl python3 python-dev && \
+    libcurl4-openssl-dev \
+    perl python3 python-dev && \    
     apt-get build-dep -yq qtbase5-dev
 
 #RUN  rm -rf /var/lib/apt/lists/*
@@ -41,11 +42,12 @@ RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
 
 WORKDIR /src/qt-build
 ARG CMAKE_GENERATOR=Ninja
-RUN ../qt/configure -silent -opensource -confirm-license \
+RUN ../qt/configure \
     -prefix /opt/qt \
-    -opensource -confirm-license \
-    -opengl \
-    -xcb \
+    -release -opensource -confirm-license \
+    -opengl desktop \
+    -static -qt-xcb -no-glib \
+    -no-pulseaudio -no-alsa \
     -nomake tools \
     -nomake examples \
     -nomake tests \
@@ -82,7 +84,7 @@ RUN ../qt/configure -silent -opensource -confirm-license \
     -skip qtxmlpatterns
 
 RUN make -j"$(nproc)" && make install -j"$(nproc)"
-
+# -xcb 
 
 #### VTK
 ARG CMAKE_GENERATOR="Unix Makefiles"
