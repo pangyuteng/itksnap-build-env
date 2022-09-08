@@ -1,4 +1,4 @@
-ARG CMAKE_VER=2.8.12.2
+ARG CMAKE_VER=2.8.12
 ARG QT_VER=5.6.3
 ARG VTK_VER=7.1.1
 ARG ITK_VER=4.13.2
@@ -23,11 +23,13 @@ RUN apt-get update && \
 
 #### CMAKE
 ARG CMAKE_VER
-WORKDIR /inst
-RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-Linux-i386.tar.gz && \
-    tar -zxvf cmake-${CMAKE_VER}-Linux-i386.tar.gz
+RUN mkdir -p /src/cmake
+RUN wget --quiet https://gitlab.kitware.com/cmake/cmake/-/archive/v${CMAKE_VER}/cmake-v${CMAKE_VER}.tar.gz -O cmake.tar.gz && \
+    tar -xzf cmake.tar.gz -C /src/cmake --strip-components 1
+WORKDIR /src/cmake
+RUN ./configure --prefix=/opt/cmake && make -j"$(nproc)" && make install -j"$(nproc)"
 
-ENV PATH=/inst/cmake-${CMAKE_VER}-Linux-i386/bin:$PATH
+ENV PATH=/opt/cmake/bin:$PATH
 
 #### QT
 ARG QT_VER
@@ -36,9 +38,9 @@ RUN git clone https://github.com/qt/qt5.git qt && \
     cd qt && git checkout v${QT_VER} && \
     perl init-repository --module-subset=default,-qtwebengine 
 
-RUN apt install gcc-8 g++-8 -yq
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
-RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
+RUN apt install gcc-5 g++-5 -yq
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 10
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 10
 
 WORKDIR /src/qt-build
 ARG CMAKE_GENERATOR=Ninja
@@ -56,29 +58,29 @@ RUN make -j"$(nproc)"
 RUN make install -j"$(nproc)"
 # -xcb 
 
-# #### VTK
-# ARG CMAKE_GENERATOR="Unix Makefiles"
-# ARG VTK_VER
-# WORKDIR /inst
-# RUN mkdir -p /src/vtk
-# #RUN wget --quiet https://github.com/Kitware/VTK/archive/refs/tags/v${VTK_VER}.tar.gz -O vtk.tar.gz && \
-# RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
-#     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
-# RUN mkdir -p /src/vtk/build
-# WORKDIR /src/vtk/build
-
-# RUN /opt/qt/bin/qt-cmake .. \
-#     -DCMAKE_BUILD_TYPE=Release \
-#     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
-#     -DBUILD_SHARED_LIBS:BOOL=ON \
-#     -DVTK_GROUP_ENABLE_Qt=YES \
-#     -DVTK_MODULE_ENABLE_VTK_GuiSupportQt=YES \
-#     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
-#     -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
-#     -DVTK_REQUIRED_OBJCXX_FLAGS='' \
-#     -DVTK_QT_VERSION=5 \
-#     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
-#     make -j"$(nproc)" && make install -j"$(nproc)"
+#### VTK
+ARG CMAKE_GENERATOR="Unix Makefiles"
+ARG VTK_VER
+WORKDIR /inst
+RUN mkdir -p /src/vtk
+#RUN wget --quiet https://github.com/Kitware/VTK/archive/refs/tags/v${VTK_VER}.tar.gz -O vtk.tar.gz && \
+RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
+    tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
+RUN mkdir -p /src/vtk/build
+WORKDIR /src/vtk/build
+# /opt/qt/bin/qmake
+RUN cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/opt/vtk \
+    -DBUILD_SHARED_LIBS:BOOL=ON \
+    -DVTK_GROUP_ENABLE_Qt=YES \
+    -DVTK_MODULE_ENABLE_VTK_GuiSupportQt=YES \
+    -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
+    -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
+    -DVTK_REQUIRED_OBJCXX_FLAGS='' \
+    -DVTK_QT_VERSION=5 \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
+    make -j"$(nproc)" && make install -j"$(nproc)"
 
 # #### ITK
 # ARG ITK_VER

@@ -10,7 +10,7 @@ DOCKER_BUILDKIT=1
 # ITK-SNAP version	GIT branch	CMake version	ITK version	VTK version	FLTK or Qt version
 # 3.8.0 and later	rel_3.8	2.8.12	4.12.2	6.3.0	Qt 5.6.0
 
-CMAKE_VER=2.8.12.2
+CMAKE_VER=2.8.12
 #QT_VER=5.6.3
 QT_VER=5.12.11
 VTK_VER=7.1.1
