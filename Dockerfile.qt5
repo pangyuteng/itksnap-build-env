@@ -52,7 +52,8 @@ RUN ../qt/configure \
     -nomake examples \
     -nomake tests 
 
-RUN make -j"$(nproc)" && make install -j"$(nproc)"
+RUN make -j"$(nproc)" 
+RUN make install -j"$(nproc)"
 # -xcb 
 
 # #### VTK
