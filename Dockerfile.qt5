@@ -1,4 +1,4 @@
-ARG CMAKE_VER=2.8.12
+ARG CMAKE_VER=3.1.0
 ARG QT_VER=5.6.3
 ARG VTK_VER=7.1.1
 ARG ITK_VER=4.13.2
@@ -22,14 +22,21 @@ RUN apt-get update && \
 #RUN  rm -rf /var/lib/apt/lists/*
 
 #### CMAKE
-ARG CMAKE_VER
-RUN mkdir -p /src/cmake
-RUN wget --quiet https://gitlab.kitware.com/cmake/cmake/-/archive/v${CMAKE_VER}/cmake-v${CMAKE_VER}.tar.gz -O cmake.tar.gz && \
-    tar -xzf cmake.tar.gz -C /src/cmake --strip-components 1
-WORKDIR /src/cmake
-RUN ./configure --prefix=/opt/cmake && make -j"$(nproc)" && make install -j"$(nproc)"
+# ARG CMAKE_VER
+# RUN mkdir -p /src/cmake
+# RUN wget --quiet https://gitlab.kitware.com/cmake/cmake/-/archive/v${CMAKE_VER}/cmake-v${CMAKE_VER}.tar.gz -O cmake.tar.gz && \
+#     tar -xzf cmake.tar.gz -C /src/cmake --strip-components 1
+# WORKDIR /src/cmake
+# RUN ./configure --prefix=/opt/cmake && make -j"$(nproc)" && make install -j"$(nproc)"
+# ENV PATH=/opt/cmake/bin:$PATH
 
-ENV PATH=/opt/cmake/bin:$PATH
+#### CMAKE
+ARG CMAKE_VER
+WORKDIR /inst
+RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-Linux-x86_64.tar.gz && \
+    tar -zxvf cmake-${CMAKE_VER}-Linux-x86_64.tar.gz
+
+ENV PATH=/inst/cmake-${CMAKE_VER}-Linux-x86_64/bin:$PATH
 
 #### QT
 ARG QT_VER
@@ -100,7 +107,7 @@ RUN cmake .. \
     -DBUILD_EXAMPLES=OFF \
     -DBUILD_TESTING=OFF \
     -DBUILD_SHARED_LIBS=ON \
-    -DVTK_DIR=/opt/vtk \
+    -DVTK_DIR=/opt/vtk/lib/cmake/vtk-7.1 \
     -DITK_DYNAMIC_LOADING=OFF \
     -DITK_USE_KWSTYLE=OFF \
     -DModule_ITKVtkGlue=ON \
@@ -110,13 +117,13 @@ RUN cmake .. \
     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
-ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
-ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
+# ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
+# ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
 
 
-### example uses Qt5
-RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
-WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
-RUN /opt/qt/bin/qt-cmake .. \
-    -DVTK_DIR=/opt/vtk \
-    -DQt5_DIR=/opt/qt/lib/cmake/Qt5 && make
+# ### example uses Qt5
+# RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
+# WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
+# RUN /opt/qt/bin/qt-cmake .. \
+#     -DVTK_DIR=/opt/vtk \
+#     -DQt5_DIR=/opt/qt/lib/cmake/Qt5 && make
