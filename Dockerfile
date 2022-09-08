@@ -44,10 +44,8 @@ WORKDIR /src/qt-build
 ARG CMAKE_GENERATOR=Ninja
 RUN ../qt/configure \
     -prefix /opt/qt \
-    -release -opensource -confirm-license \
-    -opengl desktop -xcb \
-    -static -no-glib \
-    -no-pulseaudio -no-alsa \
+    -opensource -confirm-license \
+    -opengl -xcb \
     -nomake tools \
     -nomake examples \
     -nomake tests \
