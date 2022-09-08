@@ -15,10 +15,10 @@ RUN apt-get update && \
     git wget curl vim \    
     libpng-dev libx11-dev libxt-dev libgl1-mesa-dev \
     libglu1-mesa-dev libfontconfig-dev libxrender-dev libncurses5-dev \
-    libcurl4-openssl-dev \
     perl python3 python-dev && \
     apt-get build-dep -yq qtbase5-dev
 
+# libcurl4-openssl-dev # QT conflict???
 #RUN  rm -rf /var/lib/apt/lists/*
 
 #### CMAKE
