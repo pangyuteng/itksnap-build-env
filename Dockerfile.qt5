@@ -45,14 +45,14 @@ ARG CMAKE_GENERATOR=Ninja
 RUN ../qt/configure \
     -prefix /opt/qt \
     -release -opensource -confirm-license \
-    -opengl desktop \    
-    -static -qt-xcb -no-glib \
+    -opengl desktop -xcb \
+    -static -no-glib \
     -no-pulseaudio -no-alsa \
     -nomake tools \
     -nomake examples \
     -nomake tests 
 
-# RUN make -j"$(nproc)" && make install -j"$(nproc)"
+RUN make -j"$(nproc)" && make install -j"$(nproc)"
 # -xcb 
 
 # #### VTK

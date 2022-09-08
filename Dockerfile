@@ -45,8 +45,8 @@ ARG CMAKE_GENERATOR=Ninja
 RUN ../qt/configure \
     -prefix /opt/qt \
     -release -opensource -confirm-license \
-    -opengl desktop \
-    -static -qt-xcb -no-glib \
+    -opengl desktop -xcb \
+    -static -no-glib \
     -no-pulseaudio -no-alsa \
     -nomake tools \
     -nomake examples \
@@ -84,7 +84,6 @@ RUN ../qt/configure \
     -skip qtxmlpatterns
 
 RUN make -j"$(nproc)" && make install -j"$(nproc)"
-# -xcb 
 
 #### VTK
 ARG CMAKE_GENERATOR="Unix Makefiles"
@@ -137,9 +136,6 @@ RUN /opt/qt/bin/qt-cmake .. \
 ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
 ENV Qt6_DIR /usr/local/qt/lib/cmake/Qt6
 
-
-RUN apt update && \
-    apt install -yq libcurl4-openssl-dev
 
 # ### example uses Qt5, we have Qt6...
 # RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
