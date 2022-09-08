@@ -76,6 +76,8 @@ RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v$
 RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
 
+RUN apt-get install -yq libidn11
+
 RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
