@@ -38,7 +38,7 @@ ARG QT_MM_VER
 ARG QT_VER
 RUN mkdir -p /src/qt
 WORKDIR /inst
-RUN wget https://download.qt.io/new_archive/qt/${QT_MM_VER}/${QT_VER}/single/qt-everywhere-src-${QT_VER}.tar.gz -O qt.tar.gz && \
+RUN wget https://download.qt.io/new_archive/qt/${QT_MM_VER}/${QT_VER}/single/qt-everywhere-opensource-src-${QT_VER}.tar.gz -O qt.tar.gz && \
     tar -xzf qt.tar.gz -C /src/qt --strip-components 1
 WORKDIR /src/qt
 RUN ./configure -prefix /opt/qt -release -opensource -confirm-license \
