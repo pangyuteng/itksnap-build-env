@@ -1,8 +1,7 @@
-ARG CMAKE_VER
-ARG QT_MM_VER
-ARG QT_VER
-ARG VTK_VER
-ARG ITK_VER
+ARG CMAKE_VER=3.22.6
+ARG QT_VER=6.2.2
+ARG VTK_VER=9.1.0
+ARG ITK_VER=5.2.1
 
 FROM ubuntu:18.04
 
@@ -30,21 +29,29 @@ RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER
 ENV PATH=/inst/cmake-${CMAKE_VER}-linux-x86_64/bin:$PATH
 
 #### QT
-ARG QT_MM_VER
 ARG QT_VER
-RUN mkdir -p /src/qt
-WORKDIR /inst
-RUN wget https://download.qt.io/new_archive/qt/${QT_MM_VER}/${QT_VER}/single/qt-everywhere-opensource-src-${QT_VER}.tar.gz -O qt.tar.gz && \
-    tar -xzf qt.tar.gz -C /src/qt --strip-components 1
+WORKDIR /src
+RUN git clone https://github.com/qt/qt5.git qt && \
+    cd qt && git checkout v${QT_VER} && \
+    perl init-repository --module-subset=default,-qtwebengine 
 
-# RUN apt install gcc-8 g++-8 -yq
-# RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
-# RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
+RUN apt install gcc-8 g++-8 -yq
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
 
-WORKDIR /src/qt
-RUN ./configure -prefix /opt/qt -release -opensource -confirm-license \
-    -opengl desktop -nomake examples -nomake tests && \
-    make -j"$(nproc)" && make install -j"$(nproc)"
+WORKDIR /src/qt-build
+ARG CMAKE_GENERATOR=Ninja
+RUN ../qt/configure -silent -opensource -confirm-license \
+    -prefix /opt/qt \
+    -opensource -confirm-license \
+    -opengl \
+    -xcb \
+    -nomake tools \
+    -nomake examples \
+    -nomake tests 
+
+RUN make -j"$(nproc)" && make install -j"$(nproc)"
+
 
 #### VTK
 ARG CMAKE_GENERATOR="Unix Makefiles"
@@ -66,8 +73,8 @@ RUN /opt/qt/bin/qt-cmake .. \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtSQL=NO \
     -DVTK_REQUIRED_OBJCXX_FLAGS='' \
-    -DVTK_QT_VERSION=6 \
-    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
+    -DVTK_QT_VERSION=5 \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 #### ITK
@@ -91,7 +98,7 @@ RUN /opt/qt/bin/qt-cmake .. \
     -DModule_ITKReview=ON \
     -DITK_BUILD_DEFAULT_MODULES=ON \
     -DModule_MorphologicalContourInterpolation=ON \
-    -DQt6_DIR:PATH=/opt/qt/lib/cmake/Qt6 && \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
 ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
@@ -106,4 +113,4 @@ RUN apt update && \
 # WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
 # RUN /opt/qt/bin/qt-cmake .. \
 #     -DVTK_DIR=/opt/vtk \
-#     -DQt6_DIR=/opt/qt/lib/cmake/Qt6 && make
+#     -DQt5_DIR=/opt/qt/lib/cmake/Qt6 && make
