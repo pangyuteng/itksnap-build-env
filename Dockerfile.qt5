@@ -29,10 +29,6 @@ RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER
 
 ENV PATH=/inst/cmake-${CMAKE_VER}-linux-x86_64/bin:$PATH
 
-RUN apt install gcc-8 g++-8 -yq
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
-RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
-
 #### QT
 ARG QT_MM_VER
 ARG QT_VER
@@ -40,6 +36,11 @@ RUN mkdir -p /src/qt
 WORKDIR /inst
 RUN wget https://download.qt.io/new_archive/qt/${QT_MM_VER}/${QT_VER}/single/qt-everywhere-opensource-src-${QT_VER}.tar.gz -O qt.tar.gz && \
     tar -xzf qt.tar.gz -C /src/qt --strip-components 1
+
+# RUN apt install gcc-8 g++-8 -yq
+# RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
+# RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 10
+
 WORKDIR /src/qt
 RUN ./configure -prefix /opt/qt -release -opensource -confirm-license \
     -opengl desktop -nomake examples -nomake tests && \
