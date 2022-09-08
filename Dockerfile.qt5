@@ -68,7 +68,7 @@ RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v$
     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
 RUN mkdir -p /src/vtk/build
 WORKDIR /src/vtk/build
-# /opt/qt/bin/qmake
+
 RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
@@ -82,37 +82,37 @@ RUN cmake .. \
     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
-# #### ITK
-# ARG ITK_VER
-# WORKDIR /inst
-# RUN mkdir -p /src/itk
-# RUN wget --quiet https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
-#     tar -xzf itk.tar.gz -C /src/itk --strip-components 1
-# RUN mkdir -p /src/itk/build
-# WORKDIR /src/itk/build
-# RUN /opt/qt/bin/qt-cmake .. \
-#     -DCMAKE_BUILD_TYPE=Release \
-#     -DCMAKE_INSTALL_PREFIX=/opt/itk \
-#     -DBUILD_DOXYGEN=OFF \
-#     -DBUILD_EXAMPLES=OFF \
-#     -DBUILD_SHARED_LIBS=OFF \
-#     -DITK_DYNAMIC_LOADING=OFF \
-#     -DBUILD_TESTING=OFF \
-#     -DITK_USE_KWSTYLE=OFF \
-#     -DModule_ITKVtkGlue=ON \
-#     -DModule_ITKReview=ON \
-#     -DITK_BUILD_DEFAULT_MODULES=ON \
-#     -DModule_MorphologicalContourInterpolation=ON \
-#     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
-#     make -j"$(nproc)" && make install -j"$(nproc)"
+#### ITK
+ARG ITK_VER
+WORKDIR /inst
+RUN mkdir -p /src/itk
+RUN wget --quiet https://github.com/InsightSoftwareConsortium/ITK/releases/download/v${ITK_VER}/InsightToolkit-${ITK_VER}.tar.gz -O itk.tar.gz && \
+    tar -xzf itk.tar.gz -C /src/itk --strip-components 1
+RUN mkdir -p /src/itk/build
+WORKDIR /src/itk/build
+RUN cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/opt/itk \
+    -DBUILD_DOXYGEN=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DITK_DYNAMIC_LOADING=OFF \
+    -DBUILD_TESTING=OFF \
+    -DITK_USE_KWSTYLE=OFF \
+    -DModule_ITKVtkGlue=ON \
+    -DModule_ITKReview=ON \
+    -DITK_BUILD_DEFAULT_MODULES=ON \
+    -DModule_MorphologicalContourInterpolation=ON \
+    -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
+    make -j"$(nproc)" && make install -j"$(nproc)"
 
-# ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
-# ENV Qt6_DIR /usr/local/qt/lib/cmake/Qt6
+ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
+ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
 
 
-# ### example uses Qt5, we have Qt6...
-# RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
-# WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
-# RUN /opt/qt/bin/qt-cmake .. \
-#     -DVTK_DIR=/opt/vtk \
-#     -DQt5_DIR=/opt/qt/lib/cmake/Qt6 && make
+### example uses Qt5
+RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
+WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
+RUN /opt/qt/bin/qt-cmake .. \
+    -DVTK_DIR=/opt/vtk \
+    -DQt5_DIR=/opt/qt/lib/cmake/Qt5 && make
