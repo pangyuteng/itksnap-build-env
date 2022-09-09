@@ -78,7 +78,8 @@ WORKDIR /src/vtk/build
 
 RUN apt-get install -yq libidn11
 
-RUN /opt/qt/bin/qt-cmake .. \
+# RUN /opt/qt/bin/qt-cmake .. \
+RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/vtk \
     -DBUILD_SHARED_LIBS:BOOL=ON \
@@ -102,7 +103,9 @@ RUN wget --quiet https://github.com/InsightSoftwareConsortium/ITK/releases/downl
     tar -xzf itk.tar.gz -C /src/itk --strip-components 1
 RUN mkdir -p /src/itk/build
 WORKDIR /src/itk/build
-RUN /opt/qt/bin/qt-cmake .. \
+
+#RUN /opt/qt/bin/qt-cmake .. \
+RUN cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/itk \
     -DBUILD_DOXYGEN=OFF \
