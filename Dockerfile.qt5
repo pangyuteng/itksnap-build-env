@@ -34,7 +34,7 @@ RUN apt-get update && \
 ARG CMAKE_VER
 WORKDIR /inst
 RUN mkdir -p /opt/cmake
-RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-Linux-x86_64.tar.gz -o cmake.tar.gz && \
+RUN wget --quiet https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-Linux-x86_64.tar.gz -O cmake.tar.gz && \
     tar -xzf cmake.tar.gz -C /opt/cmake --strip-components 1
 ENV PATH=/opt/cmake/bin:$PATH
 
