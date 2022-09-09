@@ -2,7 +2,7 @@ ARG CMAKE_VER=3.22.6
 ARG QT_VER=6.2.2
 ARG VTK_VER=9.1.0
 ARG ITK_VER=5.2.1
-ARG ITKSNAP_VER=3.8.0
+ARG ITKSNAP_TAG=master
 
 FROM ubuntu:18.04
 
@@ -142,7 +142,7 @@ RUN mkdir -p itksnap-build
 RUN git clone https://github.com/pyushkevich/itksnap.git
 RUN cd itksnap && \
     git submodule update --init && \
-    git checkout v${ITKSNAP_VER}
+    git checkout ${ITKSNAP_TAG}
 
 WORKDIR itksnap-build
 RUN /opt/qt/bin/qt-cmake ../itksnap \

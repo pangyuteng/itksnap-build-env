@@ -2,7 +2,7 @@ ARG CMAKE_VER=3.22.6
 ARG QT_VER=5.6.3
 ARG VTK_VER=7.1.1
 ARG ITK_VER=4.13.2
-ARG ITKSNAP_VER=3.4.0
+ARG ITKSNAP_TAG=3.4.0
 FROM ubuntu:18.04
 
 RUN cp /etc/apt/sources.list /etc/apt/sources.list~ && \
@@ -120,11 +120,12 @@ ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
 # RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20
 # RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20
 
-ARG ITKSNAP_VER
+ARG ITKSNAP_TAG
 WORKDIR /src
 RUN mkdir -p itksnap-build
 RUN git clone https://github.com/pyushkevich/itksnap.git
-RUN cd itksnap && git checkout v${ITKSNAP_VER}
+RUN cd itksnap && git checkout ${ITKSNAP_TAG}
+
 WORKDIR itksnap-build
 RUN cmake ../itksnap \
     -DCMAKE_BUILD_TYPE=Release \
