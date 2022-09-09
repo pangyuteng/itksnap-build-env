@@ -23,4 +23,5 @@ docker build \
     --build-arg ITK_VER=${ITK_VER} \
     --build-arg ITKSNAP_VER=${ITKSNAP_VER} \
     -f Dockerfile.qt5 \
-    -t itksnap-${CMAKE_VER}-${QT_VER}-${VTK_VER}-${ITK_VER} .
+    -t itksnap-v${ITKSNAP_VER} .
+#    -t itksnap-${CMAKE_VER}-${QT_VER}-${VTK_VER}-${ITK_VER} .

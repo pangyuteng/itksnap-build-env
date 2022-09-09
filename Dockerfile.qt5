@@ -116,10 +116,9 @@ RUN cmake .. \
 ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
 ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
 
-RUN apt install gcc-6 g++-6 -yq
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 20
-RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 20
-
+# RUN apt install gcc-5 g++-5 -yq
+# RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20
+# RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20
 
 ARG ITKSNAP_VER
 WORKDIR /src
