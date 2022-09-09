@@ -52,8 +52,10 @@ git checkout v3.4.0
 docker run -it -w /workdir/itksnap -v $PWD:/workdir/itksnap itksnap-build-env bash
 
 git config --global --add safe.directory /workdir/itksnap
-mkdir build && cd build
-cmake .. \
+mkdir -p /workdir/itksnap-build && cd /workdir/itksnap-build
+
+cmake ../itksnap \
+    -DCMAKE_CXX_FLAGS="-std=c++11" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/itksnap \
     -DITK_DIR=/opt/itk/lib/cmake/ITK-4.13 \
@@ -63,8 +65,15 @@ cmake .. \
     -DQt5OpenGL_DIR=/opt/qt/lib/cmake/Qt5OpenGL \
     -DQt5Qml_DIR=/opt/qt/lib/cmake/Qt5Qml \
     -DQt5Widgets_DIR=/opt/qt/lib/cmake/Qt5Widgets \
-    -DOpenGL_GL_PREFERENCE=GLVND
+    -DOpenGL_GL_PREFERENCE=GLVND 
 &> itksnap.out
+
+&> /workdir/itksnap/itksnap.out
+
+#-DCMAKE_CXX_FLAGS="-std=c++98" \
+#-DCMAKE_CXX_FLAGS="-std=c++0x" \
+
+
 
 make -j"$(nproc)" && make install -j"$(nproc)"
 
