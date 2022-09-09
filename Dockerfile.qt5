@@ -2,7 +2,7 @@ ARG CMAKE_VER=3.22.6
 ARG QT_VER=5.6.3
 ARG VTK_VER=7.1.1
 ARG ITK_VER=4.13.2
-
+ARG ITKSNAP_VER=3.4.0
 FROM ubuntu:18.04
 
 RUN cp /etc/apt/sources.list /etc/apt/sources.list~ && \
@@ -20,15 +20,6 @@ RUN apt-get update && \
     apt-get build-dep -yq qtbase5-dev
 
 #RUN  rm -rf /var/lib/apt/lists/*
-
-#### CMAKE
-# ARG CMAKE_VER
-# RUN mkdir -p /src/cmake
-# RUN wget --quiet https://gitlab.kitware.com/cmake/cmake/-/archive/v${CMAKE_VER}/cmake-v${CMAKE_VER}.tar.gz -O cmake.tar.gz && \
-#     tar -xzf cmake.tar.gz -C /src/cmake --strip-components 1
-# WORKDIR /src/cmake
-# RUN ./configure --prefix=/opt/cmake && make -j"$(nproc)" && make install -j"$(nproc)"
-# ENV PATH=/opt/cmake/bin:$PATH
 
 #### CMAKE
 ARG CMAKE_VER
@@ -125,9 +116,27 @@ RUN cmake .. \
 ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
 ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
 
-# ### example uses Qt5
-# RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
-# WORKDIR /src/vtk/Examples/GUI/Qt/SimpleView/build
-# RUN /opt/qt/bin/qt-cmake .. \
-#     -DVTK_DIR=/opt/vtk \
-#     -DQt5_DIR=/opt/qt/lib/cmake/Qt5 && make
+RUN apt install gcc-6 g++-6 -yq
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 20
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 20
+
+
+ARG ITKSNAP_VER
+WORKDIR /src
+RUN mkdir -p itksnap-build
+RUN git clone https://github.com/pyushkevich/itksnap.git
+RUN cd itksnap && git checkout v${ITKSNAP_VER}
+WORKDIR itksnap-build
+RUN cmake ../itksnap \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/opt/itksnap \
+    -DITK_DIR=/opt/itk/lib/cmake/ITK-4.13 \
+    -DVTK_DIR=/opt/vtk/lib/cmake/vtk-7.1 \
+    -DQt5_DIR=/opt/qt/lib/cmake/Qt5 \
+    -DQt5Concurrent_DIR=/opt/qt/lib/cmake/Qt5Concurrent \
+    -DQt5OpenGL_DIR=/opt/qt/lib/cmake/Qt5OpenGL \
+    -DQt5Qml_DIR=/opt/qt/lib/cmake/Qt5Qml \
+    -DQt5Widgets_DIR=/opt/qt/lib/cmake/Qt5Widgets \
+    -DOpenGL_GL_PREFERENCE=GLVND
+
+RUN make -j"$(nproc)" && make install -j"$(nproc)"

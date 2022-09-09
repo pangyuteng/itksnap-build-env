@@ -16,5 +16,5 @@ docker build \
     --build-arg QT_VER=${QT_VER} \
     --build-arg VTK_VER=${VTK_VER} \
     --build-arg ITK_VER=${ITK_VER} \
+    -f Dockerfile.qt6 \
     -t itksnap-${CMAKE_VER}-${QT_VER}-${VTK_VER}-${ITK_VER} .
-
