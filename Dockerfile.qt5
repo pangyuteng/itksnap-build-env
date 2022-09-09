@@ -125,21 +125,21 @@ ARG ITK_MM_VER
 ARG VTK_MM_VER
 ARG ITKSNAP_TAG
 WORKDIR /src
-RUN mkdir -p itksnap-build
-RUN git clone https://github.com/pyushkevich/itksnap.git
-RUN cd itksnap && git checkout ${ITKSNAP_TAG}
+# RUN mkdir -p itksnap-build
+# RUN git clone https://github.com/pyushkevich/itksnap.git
+# RUN cd itksnap && git checkout ${ITKSNAP_TAG}
 
-WORKDIR itksnap-build
-RUN cmake ../itksnap \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/opt/itksnap \
-    -DITK_DIR=/opt/itk/lib/cmake/ITK-${ITK_MM_VER} \
-    -DVTK_DIR=/opt/vtk/lib/cmake/vtk-${VTK_MM_VER} \
-    -DQt5_DIR=/opt/qt/lib/cmake/Qt5 \
-    -DQt5Concurrent_DIR=/opt/qt/lib/cmake/Qt5Concurrent \
-    -DQt5OpenGL_DIR=/opt/qt/lib/cmake/Qt5OpenGL \
-    -DQt5Qml_DIR=/opt/qt/lib/cmake/Qt5Qml \
-    -DQt5Widgets_DIR=/opt/qt/lib/cmake/Qt5Widgets \
-    -DOpenGL_GL_PREFERENCE=GLVND
+# WORKDIR itksnap-build
+# RUN cmake ../itksnap \
+#     -DCMAKE_BUILD_TYPE=Release \
+#     -DCMAKE_INSTALL_PREFIX=/opt/itksnap \
+#     -DITK_DIR=/opt/itk/lib/cmake/ITK-${ITK_MM_VER} \
+#     -DVTK_DIR=/opt/vtk/lib/cmake/vtk-${VTK_MM_VER} \
+#     -DQt5_DIR=/opt/qt/lib/cmake/Qt5 \
+#     -DQt5Concurrent_DIR=/opt/qt/lib/cmake/Qt5Concurrent \
+#     -DQt5OpenGL_DIR=/opt/qt/lib/cmake/Qt5OpenGL \
+#     -DQt5Qml_DIR=/opt/qt/lib/cmake/Qt5Qml \
+#     -DQt5Widgets_DIR=/opt/qt/lib/cmake/Qt5Widgets \
+#     -DOpenGL_GL_PREFERENCE=GLVND
 
-RUN make -j"$(nproc)" && make install -j"$(nproc)"
+# RUN make -j"$(nproc)" && make install -j"$(nproc)"
