@@ -1,22 +1,25 @@
 # itksnap-build-env
 
-based on below doc, create qt,vtk,itk,itksnap building in docker.
+based on below docs, build qt,vtk,itk and finally itksnap in docker.
 
 http://www.itksnap.org/pmwiki/pmwiki.php%3Fn%3DDocumentation.BuildingITK-SNAP
 https://wiki.qt.io/Building_Qt_5_from_Git
 
 
-+ building containers
++ building containers (for now with below versions)
 
 ```
 
-bash build.sh &> qt6.out
+# itk master c12c4bf
+bash build-qt6.sh &> qt6.out
 
-build-qt5.sh &> qt5.out
+# itk v3.4.0 55a738f
+bash build-qt5.sh &> qt5.out
+
 ```
 
 
-+ build itksnap within the container
++ build itksnap with updated code using container as env
 
 ```
 cd ..
@@ -72,8 +75,6 @@ cmake ../itksnap \
 
 #-DCMAKE_CXX_FLAGS="-std=c++98" \
 #-DCMAKE_CXX_FLAGS="-std=c++0x" \
-
-
 
 make -j"$(nproc)" && make install -j"$(nproc)"
 
