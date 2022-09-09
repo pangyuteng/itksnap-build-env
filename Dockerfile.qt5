@@ -1,8 +1,10 @@
 ARG CMAKE_VER=3.22.6
 ARG QT_VER=5.6.3
 ARG VTK_VER=7.1.1
+ARG VTK_MM_VER=7.1
 ARG ITK_VER=4.13.2
-ARG ITKSNAP_TAG=3.4.0
+ARG ITK_MM_VER=4.13
+ARG ITKSNAP_TAG=v3.4.0
 FROM ubuntu:18.04
 
 RUN cp /etc/apt/sources.list /etc/apt/sources.list~ && \
@@ -120,6 +122,8 @@ ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
 # RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20
 # RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20
 
+ARG ITK_MM_VER
+ARG VTK_MM_VER
 ARG ITKSNAP_TAG
 WORKDIR /src
 RUN mkdir -p itksnap-build
@@ -130,8 +134,8 @@ WORKDIR itksnap-build
 RUN cmake ../itksnap \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/itksnap \
-    -DITK_DIR=/opt/itk/lib/cmake/ITK-4.13 \
-    -DVTK_DIR=/opt/vtk/lib/cmake/vtk-7.1 \
+    -DITK_DIR=/opt/itk/lib/cmake/ITK-${ITK_MM_VER} \
+    -DVTK_DIR=/opt/vtk/lib/cmake/vtk-${VTK_MM_VER} \
     -DQt5_DIR=/opt/qt/lib/cmake/Qt5 \
     -DQt5Concurrent_DIR=/opt/qt/lib/cmake/Qt5Concurrent \
     -DQt5OpenGL_DIR=/opt/qt/lib/cmake/Qt5OpenGL \
