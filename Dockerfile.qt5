@@ -63,7 +63,6 @@ ARG CMAKE_GENERATOR="Unix Makefiles"
 ARG VTK_VER
 WORKDIR /inst
 RUN mkdir -p /src/vtk
-#RUN wget --quiet https://github.com/Kitware/VTK/archive/refs/tags/v${VTK_VER}.tar.gz -O vtk.tar.gz && \
 RUN wget --quiet https://gitlab.kitware.com/vtk/vtk/-/archive/v${VTK_VER}/vtk-v${VTK_VER}.tar.gz -O vtk.tar.gz && \
     tar -xzf vtk.tar.gz -C /src/vtk --strip-components 1
 RUN mkdir -p /src/vtk/build
