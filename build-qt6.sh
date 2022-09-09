@@ -10,7 +10,8 @@ CMAKE_VER=3.22.6
 QT_VER=6.2.2
 VTK_VER=9.1.0
 ITK_VER=5.2.1
-ITKSNAP_TAG=master
+#ITKSNAP_TAG=master
+ITKSNAP_TAG=c12c4bf
 
 docker build \
     --build-arg CMAKE_VER=${CMAKE_VER} \

@@ -4,7 +4,7 @@ ARG VTK_VER=7.1.1
 ARG VTK_MM_VER=7.1
 ARG ITK_VER=4.13.2
 ARG ITK_MM_VER=4.13
-ARG ITKSNAP_TAG=v3.4.0
+ARG ITKSNAP_TAG=55a738f
 FROM ubuntu:18.04
 
 RUN cp /etc/apt/sources.list /etc/apt/sources.list~ && \
