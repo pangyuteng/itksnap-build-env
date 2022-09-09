@@ -23,7 +23,7 @@ cd ..
 git clone git@github.com:pyushkevich/itksnap.git
 cd itksnap
 git submodule update --init
-git checkout v3.4.0
+git checkout master
 
 docker run -it -w /workdir/itksnap -v $PWD:/workdir/itksnap itksnap-build-env bash
 
@@ -39,6 +39,26 @@ cd build
     -DITK_DIR=/opt/itk \
     -DVTK_DIR=/opt/vtk \
     -DQt6_DIR=/opt/qt/lib/cmake/Qt6
+
+make -j"$(nproc)" && make install -j"$(nproc)"
+
+```
+```
+cd ..
+git clone git@github.com:pyushkevich/itksnap.git
+cd itksnap
+git checkout v3.4.0
+ 
+docker run -it -w /workdir/itksnap -v $PWD:/workdir/itksnap itksnap-build-env bash
+
+mkdir build
+cd build
+cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/opt/itksnap \
+    -DITK_DIR=/opt/itk/lib/cmake/ITK-4.13 \
+    -DVTK_DIR=/opt/vtk/lib/cmake/vtk-7.1 \
+    -DQt5_DIR=/opt/qt/lib/cmake/Qt5
 
 make -j"$(nproc)" && make install -j"$(nproc)"
 

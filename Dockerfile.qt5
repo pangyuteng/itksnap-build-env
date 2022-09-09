@@ -1,4 +1,4 @@
-ARG CMAKE_VER=3.1.0
+ARG CMAKE_VER=3.16.0
 ARG QT_VER=5.6.3
 ARG VTK_VER=7.1.1
 ARG ITK_VER=4.13.2
@@ -15,10 +15,10 @@ RUN apt-get update && \
     git wget curl vim \    
     libpng-dev libx11-dev libxt-dev libgl1-mesa-dev \
     libglu1-mesa-dev libfontconfig-dev libxrender-dev libncurses5-dev \
+    libcurl4-openssl-dev \
     perl python3 python-dev && \
     apt-get build-dep -yq qtbase5-dev
 
-# libcurl4-openssl-dev # QT conflict???
 #RUN  rm -rf /var/lib/apt/lists/*
 
 #### CMAKE
@@ -119,9 +119,8 @@ RUN cmake .. \
     -DQt5_DIR:PATH=/opt/qt/lib/cmake/Qt5 && \
     make -j"$(nproc)" && make install -j"$(nproc)"
 
-# ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
-# ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
-
+ENV LD_LIBRARY_PATH /opt/qt/lib/:/opt/itk/lib:/opt/vtk/lib:$LD_LIBRARY_PATH
+ENV Qt5_DIR /usr/local/qt/lib/cmake/Qt5
 
 # ### example uses Qt5
 # RUN mkdir -p /src/vtk/Examples/GUI/Qt/SimpleView/build
