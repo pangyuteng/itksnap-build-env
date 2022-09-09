@@ -63,6 +63,7 @@ cmake .. \
     -DQt5OpenGL_DIR=/opt/qt/lib/cmake/Qt5OpenGL \
     -DQt5Qml_DIR=/opt/qt/lib/cmake/Qt5Qml \
     -DQt5Widgets_DIR=/opt/qt/lib/cmake/Qt5Widgets \
+    -DOpenGL_GL_PREFERENCE=GLVND
 &> itksnap.out
 
 make -j"$(nproc)" && make install -j"$(nproc)"
